@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TThumbsMapper">
+
+    <resultMap type="TThumbs" id="TThumbsResult">
+        <result property="id"    column="id"    />
+        <result property="detailId"    column="detail_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTThumbsVo">
+        select id, detail_id, user_id, create_time from t_thumbs
+    </sql>
+
+    <select id="selectTThumbsList" parameterType="TThumbs" resultMap="TThumbsResult">
+        <include refid="selectTThumbsVo"/>
+        <where>
+            <if test="detailId != null "> and detail_id = #{detailId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectTThumbsMyList" resultType="com.wanou.project.system.domain.vo.ThumbsVo">
+        select tid.id,
+               content,
+               cover,
+               su.nick_name as nickname,
+               su.avatar,
+               t.create_time as createTime,
+               tid.cover,
+               tid.id as detailId
+        from t_thumbs t
+        left join t_img_detail tid on t.detail_id = tid.id
+        left join sys_user su on t.user_id = su.user_id
+        where tid.user_id = #{userId}
+        order by t.create_time desc
+    </select>
+
+    <select id="selectTThumbsById" parameterType="Long" resultMap="TThumbsResult">
+        <include refid="selectTThumbsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTThumbs" parameterType="TThumbs" useGeneratedKeys="true" keyProperty="id">
+        insert into t_thumbs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="detailId != null">detail_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="detailId != null">#{detailId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTThumbs" parameterType="TThumbs">
+        update t_thumbs
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="detailId != null">detail_id = #{detailId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTThumbsById" parameterType="Long">
+        delete from t_thumbs where id = #{id}
+    </delete>
+
+    <delete id="deleteTThumbsByIds" parameterType="String">
+        delete from t_thumbs where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

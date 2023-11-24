@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbEvaluateMapper">
+
+    <resultMap type="TbEvaluate" id="TbEvaluateResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="type"    column="type"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="commonId"    column="common_id"    />
+    </resultMap>
+
+    <sql id="selectTbEvaluateVo">
+        select te.id, te.content, te.type, te.user_id, te.create_time, te.common_id,su.nick_name as userName from tb_evaluate te
+        LEFT JOIN sys_user su ON su.user_id = te.user_id
+    </sql>
+
+    <select id="selectTbEvaluateList" parameterType="TbEvaluate" resultMap="TbEvaluateResult">
+        <include refid="selectTbEvaluateVo"/>
+        <where>
+            <if test="content != null  and content != ''"> and te.content = #{content}</if>
+            <if test="type != null "> and te.type = #{type}</if>
+            <if test="userId != null "> and te.user_id = #{userId}</if>
+            <if test="commonId != null "> and te.common_id = #{commonId}</if>
+        </where>
+    </select>
+
+    <select id="selectTbEvaluateById" parameterType="Long" resultMap="TbEvaluateResult">
+        <include refid="selectTbEvaluateVo"/>
+        where te.id = #{id}
+    </select>
+
+    <insert id="insertTbEvaluate" parameterType="TbEvaluate">
+        insert into tb_evaluate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="content != null">content,</if>
+            <if test="type != null">type,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="commonId != null">common_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="content != null">#{content},</if>
+            <if test="type != null">#{type},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="commonId != null">#{commonId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbEvaluate" parameterType="TbEvaluate">
+        update tb_evaluate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="commonId != null">common_id = #{commonId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbEvaluateById" parameterType="Long">
+        delete from tb_evaluate where id = #{id}
+    </delete>
+
+    <delete id="deleteTbEvaluateByIds" parameterType="String">
+        delete from tb_evaluate where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

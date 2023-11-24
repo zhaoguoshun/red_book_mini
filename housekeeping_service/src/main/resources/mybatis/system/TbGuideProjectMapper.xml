@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbGuideProjectMapper">
+
+    <resultMap type="TbGuideProject" id="TbGuideProjectResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="summary"    column="summary"    />
+        <result property="userId"    column="user_id"    />
+        <result property="review"    column="review"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTbGuideProjectVo">
+        select tgp.id, tgp.name, tgp.summary, tgp.user_id, tgp.review, tgp.create_time,su.nick_name as userName from tb_guide_project tgp
+        LEFT JOIN sys_user su ON tgp.user_id = su.user_id
+    </sql>
+
+    <select id="selectTbGuideProjectList" parameterType="TbGuideProject" resultMap="TbGuideProjectResult">
+        <include refid="selectTbGuideProjectVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and tgp.name like concat('%', #{name}, '%')</if>
+            <if test="summary != null  and summary != ''"> and tgp.summary = #{summary}</if>
+            <if test="userId != null "> and tgp.user_id = #{userId}</if>
+            <if test="review != null "> and tgp.review = #{review}</if>
+        </where>
+    </select>
+
+    <select id="selectTbGuideProjectById" parameterType="Long" resultMap="TbGuideProjectResult">
+        <include refid="selectTbGuideProjectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbGuideProject" parameterType="TbGuideProject" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_guide_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="summary != null">summary,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="review != null">review,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="summary != null">#{summary},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="review != null">#{review},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbGuideProject" parameterType="TbGuideProject">
+        update tb_guide_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="review != null">review = #{review},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbGuideProjectById" parameterType="Long">
+        delete from tb_guide_project where id = #{id}
+    </delete>
+
+    <delete id="deleteTbGuideProjectByIds" parameterType="String">
+        delete from tb_guide_project where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

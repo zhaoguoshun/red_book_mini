@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.HkWaiterMapper">
+
+    <resultMap type="HkWaiter" id="HkWaiterResult">
+        <result property="id"    column="id"    />
+        <result property="waiterName"    column="waiter_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="personType"    column="person_type"    />
+        <result property="price"    column="price"    />
+        <result property="basePrice"    column="base_price"    />
+        <result property="nativePlace"    column="native_place"    />
+        <result property="age"    column="age"    />
+        <result property="birthDay"    column="birth_day"    />
+        <result property="diploma"    column="diploma"    />
+        <result property="isGetMarried"    column="is_get_married"    />
+        <result property="introduce"    column="introduce"    />
+        <result property="address"    column="address"    />
+        <result property="status"    column="status"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+    </resultMap>
+
+    <sql id="selectHkWaiterVo">
+        select id, waiter_name, phone, person_type, price, base_price, native_place, age, birth_day, diploma, is_get_married, introduce, address, status, gmt_create from hk_waiter
+    </sql>
+
+    <select id="selectHkWaiterList" parameterType="HkWaiter" resultMap="HkWaiterResult">
+        <include refid="selectHkWaiterVo"/>
+        <where>
+            <if test="waiterName != null  and waiterName != ''"> and waiter_name like concat('%', #{waiterName}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="personType != null "> and person_type = #{personType}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="basePrice != null "> and base_price = #{basePrice}</if>
+            <if test="nativePlace != null  and nativePlace != ''"> and native_place = #{nativePlace}</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="birthDay != null "> and birth_day = #{birthDay}</if>
+            <if test="diploma != null  and diploma != ''"> and diploma = #{diploma}</if>
+            <if test="isGetMarried != null  and isGetMarried != ''"> and is_get_married = #{isGetMarried}</if>
+            <if test="introduce != null  and introduce != ''"> and introduce = #{introduce}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="gmtCreate != null "> and gmt_create = #{gmtCreate}</if>
+        </where>
+    </select>
+
+    <select id="selectHkWaiterById" parameterType="Long" resultMap="HkWaiterResult">
+        <include refid="selectHkWaiterVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHkWaiter" parameterType="HkWaiter" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_waiter
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="waiterName != null and waiterName != ''">waiter_name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="personType != null">person_type,</if>
+            <if test="price != null">price,</if>
+            <if test="basePrice != null">base_price,</if>
+            <if test="nativePlace != null">native_place,</if>
+            <if test="age != null">age,</if>
+            <if test="birthDay != null">birth_day,</if>
+            <if test="diploma != null">diploma,</if>
+            <if test="isGetMarried != null">is_get_married,</if>
+            <if test="introduce != null">introduce,</if>
+            <if test="address != null">address,</if>
+            <if test="status != null">status,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="waiterName != null and waiterName != ''">#{waiterName},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="personType != null">#{personType},</if>
+            <if test="price != null">#{price},</if>
+            <if test="basePrice != null">#{basePrice},</if>
+            <if test="nativePlace != null">#{nativePlace},</if>
+            <if test="age != null">#{age},</if>
+            <if test="birthDay != null">#{birthDay},</if>
+            <if test="diploma != null">#{diploma},</if>
+            <if test="isGetMarried != null">#{isGetMarried},</if>
+            <if test="introduce != null">#{introduce},</if>
+            <if test="address != null">#{address},</if>
+            <if test="status != null">#{status},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHkWaiter" parameterType="HkWaiter">
+        update hk_waiter
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="waiterName != null and waiterName != ''">waiter_name = #{waiterName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="personType != null">person_type = #{personType},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="basePrice != null">base_price = #{basePrice},</if>
+            <if test="nativePlace != null">native_place = #{nativePlace},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="birthDay != null">birth_day = #{birthDay},</if>
+            <if test="diploma != null">diploma = #{diploma},</if>
+            <if test="isGetMarried != null">is_get_married = #{isGetMarried},</if>
+            <if test="introduce != null">introduce = #{introduce},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkWaiterById" parameterType="Long">
+        delete from hk_waiter where id = #{id}
+    </delete>
+
+    <delete id="deleteHkWaiterByIds" parameterType="String">
+        delete from hk_waiter where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

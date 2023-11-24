@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbCommentMapper">
+
+    <resultMap type="TbComment" id="TbCommentResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="goodId"    column="good_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTbCommentVo">
+        select tc.id, tc.content, tc.good_id, tc.user_id, tc.create_time,su.nick_name as nickname,ttc.name as goodName from tb_comment tc
+        LEFT JOIN sys_user su ON su.user_id = tc.user_id
+        LEFT JOIN tb_commodity ttc ON ttc.id = tc.good_id
+    </sql>
+
+    <select id="selectTbCommentList" parameterType="TbComment" resultMap="TbCommentResult">
+        <include refid="selectTbCommentVo"/>
+        <where>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="goodId != null "> and good_id = #{goodId}</if>
+            <if test="userId != null "> and su.user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectTbCommentById" parameterType="Long" resultMap="TbCommentResult">
+        <include refid="selectTbCommentVo"/>
+        where tc.id = #{id}
+    </select>
+
+    <insert id="insertTbComment" parameterType="TbComment">
+        insert into tb_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="content != null">content,</if>
+            <if test="goodId != null">good_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="content != null">#{content},</if>
+            <if test="goodId != null">#{goodId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbComment" parameterType="TbComment">
+        update tb_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="goodId != null">good_id = #{goodId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbCommentById" parameterType="Long">
+        delete from tb_comment where id = #{id}
+    </delete>
+
+    <delete id="deleteTbCommentByIds" parameterType="String">
+        delete from tb_comment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

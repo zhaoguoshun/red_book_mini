@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbProjectMapper">
+
+    <resultMap type="TbProject" id="TbProjectResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="summary"    column="summary"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTbProjectVo">
+        select id, name, summary, create_time from tb_project
+    </sql>
+
+    <select id="selectTbProjectList" parameterType="TbProject" resultMap="TbProjectResult">
+        <include refid="selectTbProjectVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="summary != null  and summary != ''"> and summary = #{summary}</if>
+        </where>
+    </select>
+
+    <select id="selectTbProjectById" parameterType="Long" resultMap="TbProjectResult">
+        <include refid="selectTbProjectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbProject" parameterType="TbProject">
+        insert into tb_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="summary != null">summary,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="summary != null">#{summary},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbProject" parameterType="TbProject">
+        update tb_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbProjectById" parameterType="Long">
+        delete from tb_project where id = #{id}
+    </delete>
+
+    <delete id="deleteTbProjectByIds" parameterType="String">
+        delete from tb_project where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

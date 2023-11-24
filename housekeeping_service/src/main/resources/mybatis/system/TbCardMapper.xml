@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbCardMapper">
+
+    <resultMap type="TbCard" id="TbCardResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="address"    column="address"    />
+    </resultMap>
+
+    <sql id="selectTbCardVo">
+        select tc.id, tc.user_id, tc.create_time, tc.address,su.nick_name as userName from tb_card tc
+        LEFT JOIN sys_user su ON su.user_id = tc.user_id
+    </sql>
+
+    <select id="selectTbCardList" parameterType="TbCard" resultMap="TbCardResult">
+        <include refid="selectTbCardVo"/>
+        <where>
+            <if test="userId != null "> and tc.user_id = #{userId}</if>
+            <if test="address != null  and address != ''"> and tc.address = #{address}</if>
+        </where>
+    </select>
+
+    <select id="selectTbCardById" parameterType="Long" resultMap="TbCardResult">
+        <include refid="selectTbCardVo"/>
+        where tc.id = #{id}
+    </select>
+
+    <insert id="insertTbCard" parameterType="TbCard">
+        insert into tb_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="address != null">address,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="address != null">#{address},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbCard" parameterType="TbCard">
+        update tb_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="address != null">address = #{address},</if>
+        </trim>
+        where tc.id = #{id}
+    </update>
+
+    <delete id="deleteTbCardById" parameterType="Long">
+        delete from tb_card where id = #{id}
+    </delete>
+
+    <delete id="deleteTbCardByIds" parameterType="String">
+        delete from tb_card where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
