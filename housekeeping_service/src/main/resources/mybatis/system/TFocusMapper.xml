@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TFocusMapper">
+
+    <resultMap type="TFocus" id="TFocusResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="quiltUserId"    column="quilt_user_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTFocusVo">
+        select id, user_id, quilt_user_id, create_time from t_focus
+    </sql>
+
+    <select id="selectTFocusList" parameterType="TFocus" resultMap="TFocusResult">
+        <include refid="selectTFocusVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="quiltUserId != null "> and quilt_user_id = #{quiltUserId}</if>
+        </where>
+    </select>
+
+    <select id="getFocus" resultType="com.wanou.project.system.domain.vo.TFocusDetailVO">
+        select
+            su.avatar,
+            su.nick_name as username,
+            tid.id as detailId,
+            tid.imgs_url as imgsUrl,
+            tid.create_date as createDate,
+            tid.content
+        from t_focus tf
+                 left join t_img_detail tid on tf.quilt_user_id = tid.user_id
+                 left join sys_user su on su.user_id = tf.quilt_user_id
+        where
+            tf.user_id = #{userId}
+        order by tid.create_date desc
+    </select>
+
+
+    <select id="getFocusMy" resultType="com.wanou.project.system.domain.vo.ThumbsVo">
+        select su.nick_name as nickname,
+               su.avatar,
+               t.create_time as createTime,
+               t.user_id as userId
+        from t_focus t
+        left join sys_user su on t.user_id = su.user_id
+        where t.quilt_user_id = #{userId}
+    </select>
+
+    <select id="selectTFocusById" parameterType="Long" resultMap="TFocusResult">
+        <include refid="selectTFocusVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTFocus" parameterType="TFocus" useGeneratedKeys="true" keyProperty="id">
+        insert into t_focus
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="quiltUserId != null">quilt_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="quiltUserId != null">#{quiltUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTFocus" parameterType="TFocus">
+        update t_focus
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="quiltUserId != null">quilt_user_id = #{quiltUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTFocusById" parameterType="Long">
+        delete from t_focus where id = #{id}
+    </delete>
+
+    <delete id="deleteTFocusByIds" parameterType="String">
+        delete from t_focus where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="focusCount" resultType="java.lang.Integer">
+        select
+            count(id)
+        from
+            t_focus
+        where user_id = #{uerId}
+    </select>
+
+    <select id="focusRivitCount" resultType="java.lang.Integer">
+        select
+            count(id)
+        from
+            t_focus
+        where quilt_user_id = #{uerId}
+    </select>
+</mapper>

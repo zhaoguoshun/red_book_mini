@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TDetailCollectMapper">
+
+    <resultMap type="TDetailCollect" id="TDetailCollectResult">
+        <result property="id"    column="id"    />
+        <result property="detailId"    column="detail_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTDetailCollectVo">
+        select id, detail_id, user_id, create_time from t_detail_collect
+    </sql>
+
+    <select id="selectTDetailCollectList" parameterType="TDetailCollect" resultMap="TDetailCollectResult">
+        <include refid="selectTDetailCollectVo"/>
+        <where>
+            <if test="detailId != null "> and detail_id = #{detailId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectTDetailCollectById" parameterType="Long" resultMap="TDetailCollectResult">
+        <include refid="selectTDetailCollectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTDetailCollect" parameterType="TDetailCollect" useGeneratedKeys="true" keyProperty="id">
+        insert into t_detail_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="detailId != null">detail_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="detailId != null">#{detailId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTDetailCollect" parameterType="TDetailCollect">
+        update t_detail_collect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="detailId != null">detail_id = #{detailId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTDetailCollectById" parameterType="Long">
+        delete from t_detail_collect where id = #{id}
+    </delete>
+
+    <delete id="deleteTDetailCollectByIds" parameterType="String">
+        delete from t_detail_collect where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

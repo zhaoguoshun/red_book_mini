@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.HkMoneyGrantMapper">
+
+    <resultMap type="HkMoneyGrant" id="HkMoneyGrantResult">
+        <result property="id"    column="id"    />
+        <result property="waiterId"    column="waiter_id"    />
+        <result property="salary"    column="salary"    />
+        <result property="bonus"    column="bonus"    />
+        <result property="total"    column="total"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+        <result property="waiterName"    column="waiter_name"    />
+    </resultMap>
+
+    <sql id="selectHkMoneyGrantVo">
+        select t1.id, t1.waiter_id, t1.salary, t1.bonus, t1.total, t1.gmt_create,t2.waiter_name from hk_money_grant t1
+        LEFT JOIN  hk_waiter t2 on t1.waiter_id = t2.id
+    </sql>
+
+    <select id="selectHkMoneyGrantList" parameterType="HkMoneyGrant" resultMap="HkMoneyGrantResult">
+        <include refid="selectHkMoneyGrantVo"/>
+        <where>
+            <if test="waiterId != null "> and t1.waiter_id = #{waiterId}</if>
+            <if test="waiterName != null "> and t2.waiter_name like concat('%',#{waiterName},'%')</if>
+            <if test="salary != null "> and t1.salary = #{salary}</if>
+            <if test="bonus != null "> and t1.bonus = #{bonus}</if>
+            <if test="total != null "> and t1.total = #{total}</if>
+            <if test="gmtCreate != null "> and t1.gmt_create = #{gmtCreate},</if>
+            <if test="startTime != null"><!-- 结束时间检索 -->
+                AND  t1.gmt_create >= #{startTime}
+            </if>
+            <if test="stopTime != null"><!-- 结束时间检索 -->
+                AND t1.gmt_create &lt;= #{stopTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectHkMoneyGrantById" parameterType="Long" resultMap="HkMoneyGrantResult">
+        <include refid="selectHkMoneyGrantVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHkMoneyGrant" parameterType="HkMoneyGrant" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_money_grant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="waiterId != null">waiter_id,</if>
+            <if test="salary != null">salary,</if>
+            <if test="bonus != null">bonus,</if>
+            <if test="total != null">total,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="waiterId != null">#{waiterId},</if>
+            <if test="salary != null">#{salary},</if>
+            <if test="bonus != null">#{bonus},</if>
+            <if test="total != null">#{total},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHkMoneyGrant" parameterType="HkMoneyGrant">
+        update hk_money_grant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="waiterId != null">waiter_id = #{waiterId},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="bonus != null">bonus = #{bonus},</if>
+            <if test="total != null">total = #{total},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkMoneyGrantById" parameterType="Long">
+        delete from hk_money_grant where id = #{id}
+    </delete>
+
+    <delete id="deleteHkMoneyGrantByIds" parameterType="String">
+        delete from hk_money_grant where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

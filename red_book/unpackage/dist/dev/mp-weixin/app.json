@@ -1,0 +1,88 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/chat/chat2",
+        "pages/category/category",
+        "pages/push/push",
+        "pages/main/main",
+        "pages/message/privateChat/privateChat",
+        "pages/user/user",
+        "pages/message/message",
+        "pages/setting/setting",
+        "pages/user/trends/trends",
+        "pages/user/collections/collections",
+        "pages/message/message-agrees/message-agrees",
+        "pages/message/message-followers/message-followers",
+        "pages/message/message-comments/message-comments",
+        "pages/login/login2/login2",
+        "pages/user/info/info",
+        "pages/history/history",
+        "pages/addfriend/addfriend",
+        "pages/group/group",
+        "pages/addtag/addtag",
+        "pages/addalbum/addalbum",
+        "pages/index/interest/interest",
+        "pages/index/hot/hot",
+        "pages/user/albums/albums",
+        "pages/user/albums/albumInfo",
+        "pages/user/albums/createalbum",
+        "pages/otherUser/otherUser",
+        "pages/chat/chat",
+        "pages/user/info/updateImg/updateImg",
+        "pages/user/info/updateInfo/updateInfo",
+        "pages/category/categoryList/categoryList",
+        "pages/regist/regist",
+        "pages/user/allUser/allUser",
+        "pages/user/collections/collectionAlbums/collectionAlbums",
+        "pages/user/collections/collectionImgs/collectionImgs",
+        "pages/setting/updatePossword/updatePossword",
+        "pages/login/loginByCode",
+        "pages/login/findPassword",
+        "pages/index/search/search",
+        "pages/index/search/searchList",
+        "pages/tagImgList/tagImgList",
+        "pages/message/message2"
+    ],
+    "subPackages": [],
+    "window": {
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "tabBar": {
+        "color": "#666666",
+        "selectedColor": "#ff0f0f",
+        "backgroundColor": "#FFFFFF",
+        "fontSize": "14px",
+        "borderStyle": "white",
+        "midButton": {
+            "iconPath": "static/images/tabbar/add-one.png",
+            "iconWidth": "50px"
+        },
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/category/category",
+                "text": "分类"
+            },
+            {
+                "pagePath": "pages/push/push",
+                "text": "发布"
+            },
+            {
+                "pagePath": "pages/message/message",
+                "text": "消息"
+            },
+            {
+                "pagePath": "pages/user/user",
+                "text": "我",
+                "onReachBottonDistance": 200
+            }
+        ]
+    },
+    "usingComponents": {},
+    "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbMovieCollectMapper">
+
+    <resultMap type="TbMovieCollect" id="TbMovieCollectResult">
+        <result property="id"    column="id"    />
+        <result property="movieId"    column="movie_id"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectTbMovieCollectVo">
+        select id, movie_id, user_id from tb_movie_collect
+    </sql>
+
+    <select id="selectTbMovieCollectList" parameterType="TbMovieCollect" resultMap="TbMovieCollectResult">
+        select c.id, c.movie_id, c.user_id,f.title as movieName from tb_movie_collect c
+        LEFT JOIN tb_flim f ON f.id = c.movie_id
+        <where>
+            <if test="movieId != null "> and c.movie_id = #{movieId}</if>
+            <if test="userId != null "> and c.user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectTbMovieCollectById" parameterType="Long" resultMap="TbMovieCollectResult">
+        <include refid="selectTbMovieCollectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbMovieCollect" parameterType="TbMovieCollect" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_movie_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movieId != null">movie_id,</if>
+            <if test="userId != null">user_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movieId != null">#{movieId},</if>
+            <if test="userId != null">#{userId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbMovieCollect" parameterType="TbMovieCollect">
+        update tb_movie_collect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="movieId != null">movie_id = #{movieId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbMovieCollectById" parameterType="Long">
+        delete from tb_movie_collect where id = #{id}
+    </delete>
+
+    <delete id="deleteTbMovieCollectByIds" parameterType="String">
+        delete from tb_movie_collect where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

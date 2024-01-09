@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TMessageMapper">
+
+    <resultMap type="TMessage" id="TMessageResult">
+        <result property="id"    column="id"    />
+        <result property="sendId"    column="send_id"    />
+        <result property="acceptId"    column="accept_id"    />
+        <result property="content"    column="content"    />
+        <result property="time"    column="time"    />
+        <result property="creator"    column="creator"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="isNew"    column="is_new"    />
+    </resultMap>
+
+    <sql id="selectTMessageVo">
+        select id, send_id, accept_id, content, time, creator, create_date, is_new from t_message
+    </sql>
+
+    <select id="selectTMessageList" parameterType="TMessage" resultMap="TMessageResult">
+        <include refid="selectTMessageVo"/>
+        <where>
+            <if test="sendId != null "> and send_id = #{sendId}</if>
+            <if test="acceptId != null "> and accept_id = #{acceptId}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="time != null  and time != ''"> and time = #{time}</if>
+            <if test="creator != null "> and creator = #{creator}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="isNew != null "> and is_new = #{isNew}</if>
+        </where>
+    </select>
+
+    <select id="selectTMessageById" parameterType="Long" resultMap="TMessageResult">
+        <include refid="selectTMessageVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getMessageList" resultType="com.wanou.project.system.domain.vo.MessageVO">
+        select send_id as sendId,
+               accept_id as acceptId,
+               content,
+               create_date as createDate
+        from t_message m
+        where (send_id = #{userId} or accept_id = #{userId})
+        order by create_date desc
+    </select>
+
+    <select id="getMessageListInfo" resultType="com.wanou.project.system.domain.vo.MessageVO">
+        select send_id as sendId,
+               accept_id as acceptId,
+               content
+        from t_message m
+        where (send_id = #{userId} or send_id = #{acceptId})
+            and (accept_id = #{userId} or accept_id = #{acceptId})
+    </select>
+
+
+    <select id="messageUnReadCount" resultType="java.lang.Long">
+        select
+            count(*)
+        from
+            t_message
+        where
+            send_id =#{sendId}
+            and accept_id = #{userId}
+            and is_new = 0
+    </select>
+
+    <insert id="insertTMessage" parameterType="TMessage">
+        insert into t_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="sendId != null">send_id,</if>
+            <if test="acceptId != null">accept_id,</if>
+            <if test="content != null">content,</if>
+            <if test="time != null">time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="isNew != null">is_new,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="sendId != null">#{sendId},</if>
+            <if test="acceptId != null">#{acceptId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="time != null">#{time},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="isNew != null">#{isNew},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTMessage" parameterType="TMessage">
+        update t_message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sendId != null">send_id = #{sendId},</if>
+            <if test="acceptId != null">accept_id = #{acceptId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="isNew != null">is_new = #{isNew},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+    <update id="readNewMessage">
+        update t_message set is_new = 1 where send_id = #{sendId} and accept_id = #{acceptId}
+    </update>
+
+    <delete id="deleteTMessageById" parameterType="Long">
+        delete from t_message where id = #{id}
+    </delete>
+
+    <delete id="deleteTMessageByIds" parameterType="String">
+        delete from t_message where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

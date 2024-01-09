@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbSchoolMapper">
+
+    <resultMap type="TbSchool" id="TbSchoolResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTbSchoolVo">
+        select id, name, create_time from tb_school
+    </sql>
+
+    <select id="selectTbSchoolList" parameterType="TbSchool" resultMap="TbSchoolResult">
+        <include refid="selectTbSchoolVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectTbSchoolById" parameterType="Long" resultMap="TbSchoolResult">
+        <include refid="selectTbSchoolVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbSchool" parameterType="TbSchool" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_school
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbSchool" parameterType="TbSchool">
+        update tb_school
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbSchoolById" parameterType="Long">
+        delete from tb_school where id = #{id}
+    </delete>
+
+    <delete id="deleteTbSchoolByIds" parameterType="String">
+        delete from tb_school where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbAreaMapper">
+
+    <resultMap type="TbArea" id="TbAreaResult">
+        <result property="id"    column="id"    />
+        <result property="areaName"    column="area_name"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+    </resultMap>
+
+    <sql id="selectTbAreaVo">
+        select id, area_name, gmt_create from tb_area
+    </sql>
+
+    <select id="selectTbAreaList" parameterType="TbArea" resultMap="TbAreaResult">
+        <include refid="selectTbAreaVo"/>
+        <where>
+            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="gmtCreate != null "> and gmt_create = #{gmtCreate}</if>
+        </where>
+    </select>
+
+    <select id="selectTbAreaById" parameterType="Long" resultMap="TbAreaResult">
+        <include refid="selectTbAreaVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbArea" parameterType="TbArea" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="areaName != null and areaName != ''">area_name,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaName != null and areaName != ''">#{areaName},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbArea" parameterType="TbArea">
+        update tb_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="areaName != null and areaName != ''">area_name = #{areaName},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbAreaById" parameterType="Long">
+        delete from tb_area where id = #{id}
+    </delete>
+
+    <delete id="deleteTbAreaByIds" parameterType="String">
+        delete from tb_area where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbCategoryMapper">
+
+    <resultMap type="TbCategory" id="TbCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="pid"    column="pid"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+    </resultMap>
+
+    <sql id="selectTbCategoryVo">
+        select id, name, pid, gmt_create from tb_category
+    </sql>
+
+    <select id="selectTbCategoryList" parameterType="TbCategory" resultMap="TbCategoryResult">
+        <include refid="selectTbCategoryVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="pid != null "> and pid = #{pid}</if>
+            <if test="gmtCreate != null "> and gmt_create = #{gmtCreate}</if>
+        </where>
+    </select>
+
+    <select id="selectTbCategoryById" parameterType="Long" resultMap="TbCategoryResult">
+        <include refid="selectTbCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbCategory" parameterType="TbCategory">
+        insert into tb_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="pid != null">pid,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbCategory" parameterType="TbCategory">
+        update tb_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbCategoryById" parameterType="Long">
+        delete from tb_category where id = #{id}
+    </delete>
+
+    <delete id="deleteTbCategoryByIds" parameterType="String">
+        delete from tb_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

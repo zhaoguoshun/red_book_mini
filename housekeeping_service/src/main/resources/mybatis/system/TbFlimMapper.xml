@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbFlimMapper">
+
+    <resultMap type="TbFlim" id="TbFlimResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="summary"    column="summary"    />
+        <result property="url"    column="url"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="tagId"    column="tag_id"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="area"    column="area"    />
+    </resultMap>
+
+    <sql id="selectTbFlimVo">
+        select id, title, summary, url, category_id, tag_id, gmt_create, img_url, area from tb_flim
+    </sql>
+
+    <select id="selectTbFlimList" parameterType="TbFlim" resultMap="TbFlimResult">
+        <include refid="selectTbFlimVo"/>
+        <where>
+            <if test="title != null  and title != ''"> and title like concat ('%',#{title},'%')</if>
+            <if test="summary != null  and summary != ''"> and summary = #{summary}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="tagId != null "> and find_in_set(#{tagId},tag_id)</if>
+            <if test="gmtCreate != null "> and gmt_create &lt;= #{gmtCreate}</if>
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="area != null  and area != ''"> and area = #{area}</if>
+        </where>
+    </select>
+
+    <select id="selectTbFlimById" parameterType="Long" resultMap="TbFlimResult">
+        <include refid="selectTbFlimVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getflimTags"  parameterType="String" resultMap="TbFlimResult">
+        SELECT * from  tb_flim where find_in_set(#{tagId},tag_id) order by id desc
+    </select>
+
+    <select id="getRandom"  parameterType="Long" resultMap="TbFlimResult">
+        SELECT id,title,img_url,gmt_create FROM `tb_flim` ORDER BY RAND() LIMIT 5
+    </select>
+
+    <insert id="insertTbFlim" parameterType="TbFlim">
+        insert into tb_flim
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="summary != null">summary,</if>
+            <if test="url != null">url,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="tagId != null">tag_id,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="area != null">area,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="summary != null">#{summary},</if>
+            <if test="url != null">#{url},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="tagId != null">#{tagId},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="area != null">#{area},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbFlim" parameterType="TbFlim">
+        update tb_flim
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="tagId != null">tag_id = #{tagId},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="area != null">area = #{area},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbFlimById" parameterType="Long">
+        delete from tb_flim where id = #{id}
+    </delete>
+
+    <delete id="deleteTbFlimByIds" parameterType="String">
+        delete from tb_flim where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectFilmByCollectCount"  resultMap="TbFlimResult">
+        SELECT
+            f.title,
+            f.img_url,
+            f.gmt_create,
+            f.id,
+            c.movie_id,
+            count( * ) AS count
+        FROM
+            tb_movie_collect C
+            LEFT JOIN tb_flim f ON c.movie_id = f.id
+        GROUP BY
+            movie_id
+        ORDER BY
+            count DESC
+            LIMIT 5
+    </select>
+
+    <select id="selectFilmByRateTop" resultMap="TbFlimResult">
+        SELECT
+            f.title,
+            f.img_url,
+            f.gmt_create,
+            f.id
+        FROM
+            tb_rate r
+                INNER  JOIN tb_flim f ON r.movie_id = f.id
+        ORDER BY
+            r.rate_num DESC
+        LIMIT 5
+    </select>
+</mapper>

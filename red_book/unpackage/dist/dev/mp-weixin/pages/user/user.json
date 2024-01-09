@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "tui-navigation-bar": "/node-modules/thorui-uni/lib/thorui/tui-navigation-bar/tui-navigation-bar",
+    "tui-tabs": "/node-modules/thorui-uni/lib/thorui/tui-tabs/tui-tabs",
+    "tui-modal": "/node-modules/thorui-uni/lib/thorui/tui-modal/tui-modal",
+    "trend": "/pages/user/trends/trends",
+    "album": "/pages/user/albums/albums",
+    "collection": "/pages/user/collections/collections"
+  }
+}

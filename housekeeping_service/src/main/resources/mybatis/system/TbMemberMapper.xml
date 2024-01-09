@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbMemberMapper">
+
+    <resultMap type="TbMember" id="TbMemberResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="grade"    column="grade"    />
+        <result property="expireTime"    column="expire_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="card"    column="card"    />
+    </resultMap>
+
+    <sql id="selectTbMemberVo">
+        select tm.id, tm.user_id, tm.grade, tm.expire_time, tm.create_time, tm.card,su.nick_name as userName from tb_member tm
+        LEFT JOIN sys_user su ON tm.user_id = su.user_id
+    </sql>
+
+    <select id="selectTbMemberList" parameterType="TbMember" resultMap="TbMemberResult">
+        <include refid="selectTbMemberVo"/>
+        <where>
+            <if test="userId != null "> and tm.user_id = #{userId}</if>
+            <if test="grade != null  and grade != ''"> and tm.grade = #{grade}</if>
+            <if test="expireTime != null "> and tm.expire_time = #{expireTime}</if>
+            <if test="card != null  and card != ''"> and tm.card = #{card}</if>
+        </where>
+    </select>
+
+    <select id="selectTbMemberById" parameterType="Long" resultMap="TbMemberResult">
+        <include refid="selectTbMemberVo"/>
+        where tm.id = #{id}
+    </select>
+
+    <insert id="insertTbMember" parameterType="TbMember">
+        insert into tb_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="grade != null">grade,</if>
+            <if test="expireTime != null">expire_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="card != null">card,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="grade != null">#{grade},</if>
+            <if test="expireTime != null">#{expireTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="card != null">#{card},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbMember" parameterType="TbMember">
+        update tb_member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="grade != null">grade = #{grade},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="card != null">card = #{card},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbMemberById" parameterType="Long">
+        delete from tb_member where id = #{id}
+    </delete>
+
+    <delete id="deleteTbMemberByIds" parameterType="String">
+        delete from tb_member where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

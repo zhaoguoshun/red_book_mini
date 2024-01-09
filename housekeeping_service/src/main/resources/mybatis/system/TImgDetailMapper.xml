@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TImgDetailMapper">
+
+    <resultMap type="TImgDetail" id="TImgDetailResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="cover"    column="cover"    />
+        <result property="userId"    column="user_id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryPid"    column="category_pid"    />
+        <result property="imgsUrl"    column="imgs_url"    />
+        <result property="count"    column="count"    />
+        <result property="sort"    column="sort"    />
+        <result property="status"    column="status"    />
+        <result property="viewCount"    column="view_count"    />
+        <result property="agreeCount"    column="agree_count"    />
+        <result property="collectionCount"    column="collection_count"    />
+        <result property="commentCount"    column="comment_count"    />
+        <result property="creator"    column="creator"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updater"    column="updater"    />
+        <result property="updateDate"    column="update_date"    />
+    </resultMap>
+
+    <sql id="selectTImgDetailVo">
+        select id, content, cover, user_id, category_id, category_pid, imgs_url, count, sort, status, view_count, agree_count, collection_count, comment_count, creator, create_date, updater, update_date from t_img_detail
+
+    </sql>
+
+    <select id="selectTImgDetailList" parameterType="TImgDetail" resultMap="TImgDetailResult">
+        select d.id, d.content, d.cover, d.user_id, d.category_id, d.category_pid, d.imgs_url, d.count, d.sort, d.status, d.view_count,
+        d.agree_count, d.collection_count, d.comment_count, d.creator, d.create_date, d.updater, d.update_date,u.nick_name as username
+        from t_img_detail d
+        left join sys_user u on u.user_id = d.user_id
+        <where>
+            <if test="content != null  and content != ''"> and content like concat('%',#{content},'%')</if>
+            <if test="cover != null  and cover != ''"> and cover = #{cover}</if>
+            <if test="userId != null "> and d.user_id = #{userId}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="categoryPid != null "> and category_pid = #{categoryPid}</if>
+            <if test="imgsUrl != null  and imgsUrl != ''"> and imgs_url = #{imgsUrl}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="viewCount != null "> and view_count = #{viewCount}</if>
+            <if test="agreeCount != null "> and agree_count = #{agreeCount}</if>
+            <if test="collectionCount != null "> and collection_count = #{collectionCount}</if>
+            <if test="commentCount != null "> and comment_count = #{commentCount}</if>
+            <if test="creator != null "> and creator = #{creator}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updater != null "> and updater = #{updater}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+            <if test="schoolId != null "> and school_id = #{schoolId}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectTImgDetailById" parameterType="Long" resultMap="TImgDetailResult">
+        <include refid="selectTImgDetailVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectTImgDetailHostList" resultType="com.wanou.project.system.domain.TImgDetail">
+        select count(t.id) as num,
+               content,
+               nick_name,
+               avatar,
+               imgs_url
+        from t_thumbs t
+                 left join t_img_detail tid on t.detail_id = tid.id
+                 left join sys_user su on tid.user_id = su.user_id
+        group by detail_id
+        order by num desc
+    </select>
+
+    <select id="selectCollectByUserId" resultType="com.wanou.project.system.domain.TImgDetail">
+        select d.id, d.content, d.cover,
+               d.user_id, d.category_id,
+               d.category_pid, d.imgs_url as imgsUrl,
+               d.count, d.sort, d.status,
+               d.view_count, d.agree_count,
+               d.collection_count,
+               d.comment_count,
+               d.creator,
+               d.create_date,
+               d.updater,
+               d.update_date
+        from t_img_detail d
+        left join t_detail_collect c on d.id = c.detail_id
+        where c.user_id = #{userId}
+    </select>
+
+    <insert id="insertTImgDetail" parameterType="TImgDetail">
+        insert into t_img_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="content != null">content,</if>
+            <if test="cover != null">cover,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="categoryPid != null">category_pid,</if>
+            <if test="imgsUrl != null">imgs_url,</if>
+            <if test="count != null">count,</if>
+            <if test="sort != null">sort,</if>
+            <if test="status != null">status,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="agreeCount != null">agree_count,</if>
+            <if test="collectionCount != null">collection_count,</if>
+            <if test="commentCount != null">comment_count,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updater != null">updater,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="schoolId != null">school_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="content != null">#{content},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="categoryPid != null">#{categoryPid},</if>
+            <if test="imgsUrl != null">#{imgsUrl},</if>
+            <if test="count != null">#{count},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="status != null">#{status},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="agreeCount != null">#{agreeCount},</if>
+            <if test="collectionCount != null">#{collectionCount},</if>
+            <if test="commentCount != null">#{commentCount},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updater != null">#{updater},</if>
+            <if test="schoolId != null">#{schoolId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTImgDetail" parameterType="TImgDetail">
+        update t_img_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryPid != null">category_pid = #{categoryPid},</if>
+            <if test="imgsUrl != null">imgs_url = #{imgsUrl},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="agreeCount != null">agree_count = #{agreeCount},</if>
+            <if test="collectionCount != null">collection_count = #{collectionCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updater != null">updater = #{updater},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTImgDetailById" parameterType="Long">
+        delete from t_img_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteTImgDetailByIds" parameterType="String">
+        delete from t_img_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="detailCount" resultType="java.lang.Integer">
+        select
+            count(id)
+        from t_img_detail
+        where user_id = #{userId}
+    </select>
+</mapper>

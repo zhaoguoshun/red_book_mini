@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.HxClientMapper">
+
+    <resultMap type="HxClient" id="HxClientResult">
+        <result property="id"    column="id"    />
+        <result property="clientCode"    column="client_code"    />
+        <result property="clientSource"    column="client_source"    />
+        <result property="clientName"    column="client_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="subscribeTime"    column="subscribe_time"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="content"    column="content"    />
+        <result property="jobTime"    column="job_time"    />
+        <result property="address"    column="address"    />
+        <result property="remark"    column="remark"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+        <result property="isTalk"    column="is_talk"    />
+        <result property="talkCount"    column="talk_count"    />
+        <result property="isSign"    column="is_sign"    />
+        <result property="signTime"    column="sign_time"    />
+    </resultMap>
+
+    <sql id="selectHxClientVo">
+        select id, client_code, client_source, client_name, phone, subscribe_time, id_card, content, job_time, address, remark, gmt_create, is_talk, talk_count, is_sign, sign_time from hx_client
+    </sql>
+
+    <select id="selectHxClientList" parameterType="HxClient" resultMap="HxClientResult">
+        <include refid="selectHxClientVo"/>
+        <where>
+            <if test="clientCode != null  and clientCode != ''"> and client_code = #{clientCode}</if>
+            <if test="clientSource != null  and clientSource != ''"> and client_source = #{clientSource}</if>
+            <if test="clientName != null  and clientName != ''"> and client_name like concat('%', #{clientName}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="subscribeTime != null  and subscribeTime != ''"> and subscribe_time = #{subscribeTime}</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="jobTime != null  and jobTime != ''"> and job_time = #{jobTime}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="gmtCreate != null "> and gmt_create = #{gmtCreate}</if>
+            <if test="isTalk != null "> and is_talk = #{isTalk}</if>
+            <if test="talkCount != null  and talkCount != ''"> and talk_count = #{talkCount}</if>
+            <if test="isSign != null "> and is_sign = #{isSign}</if>
+            <if test="signTime != null "> and sign_time = #{signTime}</if>
+        </where>
+    </select>
+
+    <select id="selectHxClientById" parameterType="Long" resultMap="HxClientResult">
+        <include refid="selectHxClientVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHxClient" parameterType="HxClient" useGeneratedKeys="true" keyProperty="id">
+        insert into hx_client
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientCode != null and clientCode != ''">client_code,</if>
+            <if test="clientSource != null">client_source,</if>
+            <if test="clientName != null and clientName != ''">client_name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="subscribeTime != null and subscribeTime != ''">subscribe_time,</if>
+            <if test="idCard != null and idCard != ''">id_card,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="jobTime != null">job_time,</if>
+            <if test="address != null">address,</if>
+            <if test="remark != null">remark,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+            <if test="isTalk != null">is_talk,</if>
+            <if test="talkCount != null and talkCount != ''">talk_count,</if>
+            <if test="isSign != null">is_sign,</if>
+            <if test="signTime != null">sign_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientCode != null and clientCode != ''">#{clientCode},</if>
+            <if test="clientSource != null">#{clientSource},</if>
+            <if test="clientName != null and clientName != ''">#{clientName},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="subscribeTime != null and subscribeTime != ''">#{subscribeTime},</if>
+            <if test="idCard != null and idCard != ''">#{idCard},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="jobTime != null">#{jobTime},</if>
+            <if test="address != null">#{address},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+            <if test="isTalk != null">#{isTalk},</if>
+            <if test="talkCount != null and talkCount != ''">#{talkCount},</if>
+            <if test="isSign != null">#{isSign},</if>
+            <if test="signTime != null">#{signTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHxClient" parameterType="HxClient">
+        update hx_client
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="clientCode != null and clientCode != ''">client_code = #{clientCode},</if>
+            <if test="clientSource != null">client_source = #{clientSource},</if>
+            <if test="clientName != null and clientName != ''">client_name = #{clientName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="subscribeTime != null and subscribeTime != ''">subscribe_time = #{subscribeTime},</if>
+            <if test="idCard != null and idCard != ''">id_card = #{idCard},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="jobTime != null">job_time = #{jobTime},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+            <if test="isTalk != null">is_talk = #{isTalk},</if>
+            <if test="talkCount != null and talkCount != ''">talk_count = #{talkCount},</if>
+            <if test="isSign != null">is_sign = #{isSign},</if>
+            <if test="signTime != null">sign_time = #{signTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHxClientById" parameterType="Long">
+        delete from hx_client where id = #{id}
+    </delete>
+
+    <delete id="deleteHxClientByIds" parameterType="String">
+        delete from hx_client where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

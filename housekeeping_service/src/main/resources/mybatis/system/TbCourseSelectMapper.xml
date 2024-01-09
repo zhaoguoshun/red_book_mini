@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbCourseSelectMapper">
+
+    <resultMap type="TbCourseSelect" id="TbCourseSelectResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTbCourseSelectVo">
+        select tcs.id, tcs.user_id, tcs.course_id, tcs.create_time,tc.title as courseName,su.nick_name as userName  from tb_course_select tcs
+        LEFT JOIN tb_course tc ON tcs.course_id = tc.id
+        LEFT JOIN sys_user su ON su.user_id = tcs.user_id
+    </sql>
+
+    <select id="selectTbCourseSelectList" parameterType="TbCourseSelect" resultMap="TbCourseSelectResult">
+        <include refid="selectTbCourseSelectVo"/>
+        <where>
+            <if test="userId != null "> and tcs.user_id = #{userId}</if>
+            <if test="courseId != null "> and tcs.course_id = #{courseId}</if>
+        </where>
+    </select>
+
+    <select id="selectTbCourseSelectById" parameterType="Long" resultMap="TbCourseSelectResult">
+        <include refid="selectTbCourseSelectVo"/>
+        where tcs.id = #{id}
+    </select>
+
+    <insert id="insertTbCourseSelect" parameterType="TbCourseSelect">
+        insert into tb_course_select
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbCourseSelect" parameterType="TbCourseSelect">
+        update tb_course_select
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbCourseSelectById" parameterType="Long">
+        delete from tb_course_select where id = #{id}
+    </delete>
+
+    <delete id="deleteTbCourseSelectByIds" parameterType="String">
+        delete from tb_course_select where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

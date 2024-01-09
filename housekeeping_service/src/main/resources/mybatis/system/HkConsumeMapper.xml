@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.HkConsumeMapper">
+
+    <resultMap type="HkConsume" id="HkConsumeResult">
+        <result property="id"    column="id"    />
+        <result property="waiterId"    column="waiter_id"    />
+        <result property="consumeType"    column="consume_type"    />
+        <result property="price"    column="price"    />
+        <result property="address"    column="address"    />
+        <result property="consumeTime"    column="consume_time"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+        <result property="waiterName"    column="waiter_name"    />
+        <result property="createTime"    column="consume_time"    />
+    </resultMap>
+
+    <sql id="selectHkConsumeVo">
+        select t1.id, t1.waiter_id, t1.consume_type, t1.price, t1.address, t1.consume_time, t1.gmt_create,t2.waiter_name from hk_consume t1
+        LEFT JOIN hk_waiter t2 on t1.waiter_id = t2.id
+    </sql>
+
+    <select id="selectHkConsumeList" parameterType="HkConsume" resultMap="HkConsumeResult">
+        <include refid="selectHkConsumeVo"/>
+        <where>
+            <if test="waiterId != null "> and t1.waiter_id = #{waiterId}</if>
+            <if test="waiterName != null "> and t2.waiter_name  like concat('%',#{waiterName},'%')</if>
+            <if test="consumeType != null "> and t1.consume_type = #{consumeType}</if>
+            <if test="price != null "> and t1.price = #{price}</if>
+            <if test="address != null  and address != ''"> and t1.address = #{address}</if>
+            <if test="gmtCreate != null "> and t1.gmt_create = #{gmtCreate}</if>
+            <if test="startTime != null and startTime != ''">
+                AND date_format(t1.consume_time,'%y%m%d') >= date_format(#{startTime},'%y%m%d')
+            </if>
+            <if test="stopTime != null and stopTime != ''">
+                AND date_format(t1.consume_time,'%y%m%d') &lt;= date_format(#{stopTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectHkConsumeById" parameterType="Long" resultMap="HkConsumeResult">
+        <include refid="selectHkConsumeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHkConsume" parameterType="HkConsume" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_consume
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="waiterId != null">waiter_id,</if>
+            <if test="consumeType != null">consume_type,</if>
+            <if test="price != null">price,</if>
+            <if test="address != null">address,</if>
+            <if test="consumeTime != null">consume_time,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="waiterId != null">#{waiterId},</if>
+            <if test="consumeType != null">#{consumeType},</if>
+            <if test="price != null">#{price},</if>
+            <if test="address != null">#{address},</if>
+            <if test="consumeTime != null">#{consumeTime},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHkConsume" parameterType="HkConsume">
+        update hk_consume
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="waiterId != null">waiter_id = #{waiterId},</if>
+            <if test="consumeType != null">consume_type = #{consumeType},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="consumeTime != null">consume_time = #{consumeTime},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkConsumeById" parameterType="Long">
+        delete from hk_consume where id = #{id}
+    </delete>
+
+    <delete id="deleteHkConsumeByIds" parameterType="String">
+        delete from hk_consume where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

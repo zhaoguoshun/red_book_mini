@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbEmployeeMapper">
+
+    <resultMap type="TbEmployee" id="TbEmployeeResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="age"    column="age"    />
+        <result property="post"    column="post"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTbEmployeeVo">
+        select id, name, phone, age, post, create_time from tb_employee
+    </sql>
+
+    <select id="selectTbEmployeeList" parameterType="TbEmployee" resultMap="TbEmployeeResult">
+        <include refid="selectTbEmployeeVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="post != null  and post != ''"> and post = #{post}</if>
+        </where>
+    </select>
+
+    <select id="selectTbEmployeeById" parameterType="Long" resultMap="TbEmployeeResult">
+        <include refid="selectTbEmployeeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbEmployee" parameterType="TbEmployee">
+        insert into tb_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="age != null">age,</if>
+            <if test="post != null">post,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="age != null">#{age},</if>
+            <if test="post != null">#{post},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbEmployee" parameterType="TbEmployee">
+        update tb_employee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="post != null">post = #{post},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbEmployeeById" parameterType="Long">
+        delete from tb_employee where id = #{id}
+    </delete>
+
+    <delete id="deleteTbEmployeeByIds" parameterType="String">
+        delete from tb_employee where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

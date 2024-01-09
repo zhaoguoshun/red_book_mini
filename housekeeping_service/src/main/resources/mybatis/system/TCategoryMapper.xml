@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TCategoryMapper">
+
+    <resultMap type="TCategory" id="TCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="pid"    column="pid"    />
+        <result property="sort"    column="sort"    />
+        <result property="count"    column="count"    />
+        <result property="description"    column="description"    />
+        <result property="cover"    column="cover"    />
+        <result property="hotCover"    column="hot_cover"    />
+        <result property="creator"    column="creator"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updater"    column="updater"    />
+        <result property="updateDate"    column="update_date"    />
+    </resultMap>
+
+    <sql id="selectTCategoryVo">
+        select id, name, pid, sort, count, description, cover, hot_cover, creator, create_date, updater, update_date from t_category
+    </sql>
+
+    <select id="selectTCategoryList" parameterType="TCategory" resultMap="TCategoryResult">
+        <include refid="selectTCategoryVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="pid != null "> and pid = #{pid}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="cover != null  and cover != ''"> and cover = #{cover}</if>
+            <if test="hotCover != null  and hotCover != ''"> and hot_cover = #{hotCover}</if>
+            <if test="creator != null "> and creator = #{creator}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updater != null "> and updater = #{updater}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+        </where>
+    </select>
+
+    <select id="selectTCategoryById" parameterType="Long" resultMap="TCategoryResult">
+        <include refid="selectTCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getCategoryDetail" resultType="com.wanou.project.system.domain.vo.CategoryChildrenVO">
+        select
+            id,
+            cover,
+            content as name
+        from t_img_detail
+        where
+            category_id = #{id}
+    </select>
+
+    <insert id="insertTCategory" parameterType="TCategory">
+        insert into t_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="pid != null">pid,</if>
+            <if test="sort != null">sort,</if>
+            <if test="count != null">count,</if>
+            <if test="description != null">description,</if>
+            <if test="cover != null">cover,</if>
+            <if test="hotCover != null">hot_cover,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updater != null">updater,</if>
+            <if test="updateDate != null">update_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="count != null">#{count},</if>
+            <if test="description != null">#{description},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="hotCover != null">#{hotCover},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updater != null">#{updater},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTCategory" parameterType="TCategory">
+        update t_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="hotCover != null">hot_cover = #{hotCover},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updater != null">updater = #{updater},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTCategoryById" parameterType="Long">
+        delete from t_category where id = #{id}
+    </delete>
+
+    <delete id="deleteTCategoryByIds" parameterType="String">
+        delete from t_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

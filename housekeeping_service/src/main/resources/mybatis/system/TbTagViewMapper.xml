@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanou.project.system.mapper.TbTagViewMapper">
+
+    <resultMap type="TbTagView" id="TbTagViewResult">
+        <result property="id"    column="id"    />
+        <result property="tagId"    column="tag_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="gmtCreate"    column="gmt_create"    />
+        <result property="movieName"    column="movie_name"    />
+    </resultMap>
+
+    <sql id="selectTbTagViewVo">
+        select id, tag_id, user_id, gmt_create, movie_name from tb_tag_view
+    </sql>
+
+    <select id="selectTbTagViewList" parameterType="TbTagView" resultMap="TbTagViewResult">
+        <include refid="selectTbTagViewVo"/>
+        <where>
+            <if test="tagId != null "> and tag_id = #{tagId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="gmtCreate != null "> and gmt_create = #{gmtCreate}</if>
+            <if test="movieName != null  and movieName != ''"> and movie_name like concat('%', #{movieName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectTbTagViewById" parameterType="Long" resultMap="TbTagViewResult">
+        <include refid="selectTbTagViewVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbTagView" parameterType="TbTagView" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_tag_view
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagId != null">tag_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="gmtCreate != null">gmt_create,</if>
+            <if test="movieName != null">movie_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagId != null">#{tagId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+            <if test="movieName != null">#{movieName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbTagView" parameterType="TbTagView">
+        update tb_tag_view
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tagId != null">tag_id = #{tagId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+            <if test="movieName != null">movie_name = #{movieName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbTagViewById" parameterType="Long">
+        delete from tb_tag_view where id = #{id}
+    </delete>
+
+    <delete id="deleteTbTagViewByIds" parameterType="String">
+        delete from tb_tag_view where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
